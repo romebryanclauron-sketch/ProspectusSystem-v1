@@ -10,11 +10,14 @@ import StaffDashboard from './src/screens/StaffDashboard';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  // For demo purposes: simple login simulation
+  // For demo purposes: simple login (by role + ID/name for students)
   const [userRole, setUserRole] = useState(null); // 'student' or 'staff'
+  const [loggedStudent, setLoggedStudent] = useState(null);
+
+  const resetLogin = () => { setUserRole(null); setLoggedStudent(null); };
 
   if (!userRole) {
-    // Show simple login screen
+    // Show role selection
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
         <Text style={{ fontSize: 24, marginBottom: 20 }}>Prospectus System</Text>
@@ -25,29 +28,42 @@ export default function App() {
     );
   }
 
+  // Student login by ID/Name
+  if (userRole === 'student' && !loggedStudent) {
+    const StudentLogin = require('./src/components/StudentLogin').default;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+        <StudentLogin onLogin={(s) => setLoggedStudent(s)} onBack={() => setUserRole(null)} />
+      </View>
+    );
+  }
+
   // Once logged in, navigate to the appropriate dashboard
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={userRole === 'student' ? 'StudentDashboard' : 'StaffDashboard'}>
         <Stack.Screen
           name="StudentDashboard"
-          options={{ title: 'Student Dashboard' }}
+          options={{ title: 'Student Dashboard', headerRight: () => (
+            <Button title="Logout" onPress={() => resetLogin()} />
+          ) }}
         >
-          {(props) => <StudentDashboard {...props} studentName="John Doe" gpa={3.7} grades={[
-            { courseCode: 'MATH101', courseName: 'Calculus I', grade: 'A' },
-            { courseCode: 'ENG102', courseName: 'English', grade: 'B+' }
-          ]} />}
+          {(props) => loggedStudent ? (
+            <StudentDashboard {...props} studentName={loggedStudent.name} gpa={loggedStudent.gpa} grades={loggedStudent.grades} student={loggedStudent} />
+          ) : (
+            <StudentDashboard {...props} studentName="Guest" gpa={null} grades={[]} />
+          )}
         </Stack.Screen>
 
         <Stack.Screen
           name="StaffDashboard"
-          options={{ title: 'Staff Dashboard' }}
+          options={{ title: 'Staff Dashboard', headerRight: () => (
+            <Button title="Logout" onPress={() => resetLogin()} />
+          ) }}
         >
           {(props) => <StaffDashboard {...props} staffName="Ms. Smith" />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
-    
-  )
-  ;
+  );
 }
