@@ -2,8 +2,9 @@
 import React, { useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, TextInput } from 'react-native';
 
-export default function GradesheetTable({ grades = [], editable = false, onChangeGrade = () => {} }) {
+export default function GradesheetTable({ grades = [], editable = false, onChangeGrade = () => {}, program = 'All', year = 'All', semester = 'All' }) {
   // Normalize grades and split into groups Year (1-4) -> Semester (1-2)
+  // If `program/year/semester` are provided and not 'All', skip any subject not included
   const { grouped, unspecified } = useMemo(() => {
     const grouped = {};
     // Initialize years 1-4 and semesters 1-2
@@ -14,8 +15,24 @@ export default function GradesheetTable({ grades = [], editable = false, onChang
     const unspecified = [];
 
     grades.forEach((g) => {
+      // filter by program if requested
+      if (program && program !== 'All') {
+        const progs = (g._raw && g._raw.programs) || g.programs || [];
+        if (!Array.isArray(progs) || !progs.includes(program)) return; // skip this subject
+      }
+
       const y = g.year != null ? Number(g.year) : null;
       const s = g.semester != null ? Number(g.semester) : null;
+
+      // filter by year if requested
+      if (year && year !== 'All') {
+        if (y !== Number(year)) return; // skip
+      }
+
+      // filter by semester if requested
+      if (semester && semester !== 'All') {
+        if (s !== Number(semester)) return; // skip
+      }
 
       if (y >= 1 && y <= 4 && (s === 1 || s === 2)) {
         grouped[y][s].push(g);
@@ -25,22 +42,24 @@ export default function GradesheetTable({ grades = [], editable = false, onChang
     });
 
     return { grouped, unspecified };
-  }, [grades]);
+  }, [grades, program, year, semester]);
 
   const renderTable = (rows) => (
-    <ScrollView horizontal style={styles.tableContainer}>
+    <ScrollView horizontal={true} style={styles.tableContainer} contentContainerStyle={styles.tableContent}>
       <View>
         <View style={[styles.row, styles.headerRow]}>
-          <Text style={[styles.cell, styles.headerCell]}>Course Code</Text>
-          <Text style={[styles.cell, styles.headerCell]}>Descriptive Title</Text>
-          <Text style={[styles.cell, styles.headerCell]}>Co-/Prequisite</Text>
-          <Text style={[styles.cell, styles.headerCell]}>Units</Text>
-          <Text style={[styles.cell, styles.headerCell]}>Hours</Text>
-          <Text style={[styles.cell, styles.headerCell]}>Remarks</Text>
+          <Text style={[styles.cell, styles.cellCode, styles.headerCell]}>Course Code</Text>
+          <Text style={[styles.cell, styles.cellTitle, styles.headerCell]}>Descriptive Title</Text>
+          <Text style={[styles.cell, styles.cellSmall, styles.headerCell]}>Co-/Prequisite</Text>
+          <Text style={[styles.cell, styles.cellTiny, styles.headerCell]}>Units</Text>
+          <Text style={[styles.cell, styles.cellTiny, styles.headerCell]}>LEC</Text>
+          <Text style={[styles.cell, styles.cellTiny, styles.headerCell]}>LAB</Text>
+          <Text style={[styles.cell, styles.cellSmall, styles.headerCell]}>Hours</Text>
+          <Text style={[styles.cell, styles.cellSmall, styles.headerCell]}>Remarks</Text>
         </View>
 
         {rows.length === 0 ? (
-          <View style={[styles.row, styles.emptyRow]}>
+          <View style={[styles.emptyRow]}> 
             <Text style={styles.emptyText}>No courses for this term</Text>
           </View>
         ) : (
@@ -48,24 +67,27 @@ export default function GradesheetTable({ grades = [], editable = false, onChang
             const descriptiveTitle = grade.courseName || grade.descriptiveTitle || '-';
             const coPrereq = grade.coPrerequisite || grade.prerequisite || grade.corequisite || '-';
             const units = grade.units != null ? String(grade.units) : '-';
-            const hours = grade.hours != null ? String(grade.hours) : '-';
+            const lec = grade.lec != null ? String(grade.lec) : '-';
+            const lab = grade.lab != null ? String(grade.lab) : '-';
+            const hours = grade.hours != null ? String(grade.hours) : ((Number(grade.lec || 0) + Number(grade.lab || 0)) > 0 ? String(Number(grade.lec || 0) + Number(grade.lab || 0)) : '-');
             // Show student's grade in the Remarks column (per spec)
             const remarks = grade.grade ?? '-';
-            const subjectRemarks = grade.subjectRemarks || grade.remarks || '-';
 
             return (
               <View
                 key={(grade.courseCode || descriptiveTitle || idx) + idx}
                 style={[styles.row, idx % 2 === 0 ? styles.evenRow : styles.oddRow]}
               >
-                <Text style={styles.cell}>{grade.courseCode || '-'}</Text>
-                <Text style={styles.cell}>{descriptiveTitle}</Text>
-                <Text style={styles.cell}>{coPrereq}</Text>
-                <Text style={styles.cell}>{units}</Text>
-                <Text style={styles.cell}>{hours}</Text>
+                <Text style={[styles.cell, styles.cellCode]} numberOfLines={1}>{grade.courseCode || '-'}</Text>
+                <Text style={[styles.cell, styles.cellTitle]}>{descriptiveTitle}</Text>
+                <Text style={[styles.cell, styles.cellSmall]} numberOfLines={1}>{coPrereq}</Text>
+                <Text style={[styles.cell, styles.cellTiny]}>{units}</Text>
+                <Text style={[styles.cell, styles.cellTiny]}>{lec}</Text>
+                <Text style={[styles.cell, styles.cellTiny]}>{lab}</Text>
+                <Text style={[styles.cell, styles.cellSmall]}>{hours}</Text>
                 {editable ? (
                   <TextInput
-                    style={[styles.cell, styles.input]}
+                    style={[styles.cell, styles.cellSmall, styles.input]}
                     value={grade.grade != null ? String(grade.grade) : ''}
                     onChangeText={(text) => onChangeGrade(grade.courseCode, text)}
                     placeholder="Enter grade"
@@ -73,7 +95,7 @@ export default function GradesheetTable({ grades = [], editable = false, onChang
                     returnKeyType="done"
                   />
                 ) : (
-                  <Text style={styles.cell}>{remarks}</Text>
+                  <Text style={[styles.cell, styles.cellSmall]} numberOfLines={1}>{remarks}</Text>
                 )}
               </View>
             );
@@ -139,39 +161,47 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#ccc',
   },
+  tableContent: {
+    minWidth: '100%'
+  },
   row: {
     flexDirection: 'row',
-    minHeight: 40,
     alignItems: 'center',
+    minHeight: 44,
   },
   headerRow: {
-    backgroundColor: '#3498db',
+    backgroundColor: '#2d6fb4',
   },
   headerCell: {
     color: 'white',
-    fontWeight: 'bold',
+    fontWeight: '700',
+    paddingVertical: 10,
   },
   cell: {
-    minWidth: 140,
-    padding: 10,
-    borderRightWidth: 1,
-    borderRightColor: '#ccc',
+    flexShrink: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 8,
   },
+  cellCode: { flexBasis: 80, flexGrow: 0, flexShrink: 0 },
+  cellTitle: { flexBasis: 240, flexGrow: 1, flexShrink: 1 },
+  cellSmall: { flexBasis: 120, flexGrow: 0, flexShrink: 1 },
+  cellTiny: { flexBasis: 56, flexGrow: 0, flexShrink: 0, textAlign: 'center' },
   evenRow: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fafafa',
   },
   oddRow: {
     backgroundColor: '#ffffff',
   },
   emptyRow: {
     padding: 12,
+    alignItems: 'center',
   },
   emptyText: {
     padding: 10,
     color: '#888',
   },
   input: {
-    minWidth: 140,
     padding: 8,
+    minWidth: 80,
   },
 });
