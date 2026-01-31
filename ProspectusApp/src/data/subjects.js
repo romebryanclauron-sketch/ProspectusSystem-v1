@@ -7,11 +7,11 @@ const subjects = [
   { courseCode: 'GEC-RPH', descriptiveTitle: 'Reading in Phillippine History', programs: ['BSIT','BSIS'], coPrerequisite: 'none', units: 3, lec:3, lab:0, hours: 3, remarks: ' ', year: 1, semester: 1 },
   { courseCode: 'GEC-MMW', descriptiveTitle: 'Mathematics in the Modern World ', programs: ['BSIT','BSIS'], coPrerequisite: 'none', units: 3,lec:3, lab:0, hours: 3, remarks: ' ', year: 1, semester: 1 },
   { courseCode: 'GEE-TEM', descriptiveTitle: 'The Entrepreneurial Mind', programs: ['BSIT','BSIS'], coPrerequisite: 'none', units: 3, lec:3, lab:0, hours: 3, remarks: ' ', year: 1, semester: 1 },
-  { courseCode: 'CC 111', descriptiveTitle: 'Introduction to Computing', programs: ['BSIT','BSIS'], coPrerequisite: 'none', units: 3, lec:3, lab:2, hours: 5, remarks: ' ', year: 1, semester: 1 },
+  { courseCode: 'CC 111', descriptiveTitle: 'Introduction to Computing', programs: ['BSIT','BSIS'], coPrerequisite: 'none', units: 3, lec:2, lab:3, hours: 5, remarks: ' ', year: 1, semester: 1 },
   { courseCode: 'CC 112', descriptiveTitle: 'Computer Programming 1 (Lec)', programs: ['BSIT','BSIS'], coPrerequisite: 'none', units: 2, lec:2, lab:0, hours: 2, remarks: ' ', year: 1, semester: 1 },
   { courseCode: 'CC 112 L', descriptiveTitle: 'Computer Programming 1 (Lab)', programs: ['BSIT','BSIS'], coPrerequisite: 'none', units: 3, lec:0, lab:9, hours: 9, remarks: ' ', year: 1, semester: 1 },
-  { courseCode: 'AP 1', descriptiveTitle: 'Multimedia', programs: ['BSIT'], coPrerequisite: 'none', units: 3, lec:3, lab:2, hours: 5, remarks: ' ', year: 1, semester: 1 },
-  { courseCode: 'PATHFIT 1', descriptiveTitle: 'Physical Activities Towards Health and Fitness 1: Movement Competency Training ', programs: ['BSIT','BSIS'], coPrerequisite: 'none', units: 2, lec:3, lab:0, hours: 2, remarks: ' ', year: 1, semester: 1 },
+  { courseCode: 'AP 1', descriptiveTitle: 'Multimedia', programs: ['BSIT'], coPrerequisite: 'none', units: 3, lec:2, lab:3, hours: 5, remarks: ' ', year: 1, semester: 1 },
+  { courseCode: 'PATHFIT 1', descriptiveTitle: 'Physical Activities Towards Health and Fitness 1: Movement Competency Training ', programs: ['BSIT','BSIS'], coPrerequisite: 'none', units: 2, lec:2, lab:0, hours: 2, remarks: ' ', year: 1, semester: 1 },
   { courseCode: 'NSTP 1', descriptiveTitle: 'National Service Training Program 1 ( CWST 1/ LTS 1 / ROTC 1)', programs: ['BSIT','BSIS'], coPrerequisite: 'none', units: 3, lec:3, lab:0,  hours: 3, remarks: ' ', year: 1, semester: 1 },
 // BIT Programs
   { courseCode: 'CompTech 111', descriptiveTitle: 'Computer Electronics', programs: ['BIT'], coPrerequisite: 'none', units: 7, lec:3, lab:9, hours: 12, remarks: ' ', year: 1, semester: 1 },
@@ -155,14 +155,14 @@ const subjects = [
   //4th Year
   //1st Semester
   // BSIT Programs
-  { courseCode: 'PC 4412', descriptiveTitle: 'Platform Information Assurance and Security (Lec) ', programs: ['BSIT'], coPrerequisite: 'PC 3211, PC 3211 L', units: 2, lec:2, lab:0, hours: 2, remarks: ' ', year: 4, semester: 1 },
-    { courseCode: 'PC 4412', descriptiveTitle: 'Platform Information Assurance and Security (Lab) ', programs: ['BSIT'], coPrerequisite: 'PC 3211, PC 3211 L', units: 3, lec:0, lab:9, hours: 9, remarks: ' ', year: 4, semester: 1 },
-  { courseCode: 'PC 4113', descriptiveTitle: 'System Administration and Maintenance', programs: ['BSIT'], coPrerequisite: 'PC 3211, PC 3211 L', units: 3, lec:2, lab:3, hours: 5, remarks: ' ', year: 3, semester: 2 },
+  { courseCode: 'PC 4412', descriptiveTitle: 'Information Assurance and Security (Lec) ', programs: ['BSIT'], coPrerequisite: 'PC 3211, PC 3211 L', units: 2, lec:2, lab:0, hours: 2, remarks: ' ', year: 4, semester: 1 },
+    { courseCode: 'PC 4412', descriptiveTitle: 'Information Assurance and Security (Lab) ', programs: ['BSIT'], coPrerequisite: 'PC 3211, PC 3211 L', units: 3, lec:0, lab:9, hours: 9, remarks: ' ', year: 4, semester: 1 },
+  { courseCode: 'PC 4113', descriptiveTitle: 'System Administration and Maintenance', programs: ['BSIT'], coPrerequisite: 'PC 3211, PC 3211 L', units: 3, lec:2, lab:3, hours: 5, remarks: ' ', year: 4, semester: 1 },
     { courseCode: 'PC 4114', descriptiveTitle: 'Capstone Project and Research 2', programs: ['BSIT'], coPrerequisite: 'PC 329', units: 3,lec:3, lab:0, hours: 3, remarks: ' ', year: 4, semester: 1 },
-    { courseCode: 'PC 4113', descriptiveTitle: 'Systems Integration and Architecture 2', programs: ['BSIT'], coPrerequisite: 'PC 316', units: 3, lec:2, lab:3, hours: 5, remarks: ' ', year: 3, semester: 2 },
-    { courseCode: 'PC 4113', descriptiveTitle: 'Cross Platform Script Development and Technology', programs: ['BSIT'], coPrerequisite: 'PC 316', units: 3, lec:2, lab:3, hours: 5, remarks: ' ', year: 3, semester: 2 },
+    { courseCode: 'PC 4113', descriptiveTitle: 'Systems Integration and Architecture 2', programs: ['BSIT'], coPrerequisite: 'PC 316', units: 3, lec:2, lab:3, hours: 5, remarks: ' ', year: 4, semester:1 },
+    { courseCode: 'PC 4113', descriptiveTitle: 'Cross Platform Script Development and Technology', programs: ['BSIT'], coPrerequisite: 'PC 3211, PC 3211L, CC 316 ', units: 3, lec:2, lab:3, hours: 5, remarks: ' ', year: 4, semester: 1 },
  // BSIS Programs
-    { courceCode: 'GEE-FE', descriptiveTitle: 'Functional English', programs: ['BSIS'], coPrerequisite: 'none', units: 3,lec:3, lab:0, hours: 3, remarks: ' ', year: 4, semester: 1 },
+{ courceCode: 'GEE-FE', descriptiveTitle: 'Functional English', programs: ['BSIS'], coPrerequisite: 'none', units: 3,lec:3, lab:0, hours: 3, remarks: ' ', year: 4, semester: 1 },
  { courseCode: 'PC-4213', descriptiveTitle: 'IS Strategy, Management and Acquisition', programs: ['BSIS'], coPrerequisite: 'PC-3211', units: 3,lec:3, lab:0, hours: 3, remarks: ' ', year: 4, semester: 1 },
 {courseCode: 'PC-4114', descriptiveTitle: 'Capstone Project 2', programs: ['BSIS'], coPrerequisite: 'PC-3212', units: 3,lec:3, lab:0, hours: 3, remarks: ' ', year: 4, semester: 1 },
 {courseCode: 'P Elec 3', descriptiveTitle: 'Enterprise System', programs: ['BSIS'], coPrerequisite: 'PC-318', units: 3,lec:3, lab:0, hours: 3, remarks: ' ', year: 4, semester: 1 },
@@ -227,7 +227,10 @@ export function mergeGradesWithSubjects(grades = []) {
       courseName: descriptiveTitle,
       coPrerequisite: subj?.coPrerequisite || g.coPrerequisite || '-',
       units: subj?.units ?? g.units ?? '-',
-      hours: subj?.hours ?? g.hours ?? '-',
+      lec: subj?.lec ?? g.lec ?? null,
+      lab: subj?.lab ?? g.lab ?? null,
+      // compute hours preferentially from subj/g hours, otherwise sum lec+lab
+      hours: subj?.hours ?? g.hours ?? ((Number(subj?.lec ?? g.lec ?? 0) + Number(subj?.lab ?? g.lab ?? 0)) || '-'),
       // 'remarks' should represent the student's grade; keep subject remark separately
       remarks: g.grade ?? subj?.remarks ?? '-',
       subjectRemarks: subj?.remarks || null,

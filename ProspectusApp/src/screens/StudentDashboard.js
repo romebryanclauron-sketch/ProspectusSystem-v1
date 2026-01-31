@@ -1,7 +1,7 @@
 // src/screens/StudentDashboard.js
 import React, { useState, useEffect } from 'react';
-import { ScrollView, View, Text, StyleSheet, Button, Alert } from 'react-native';
-import GradeCard from '../components/GradeCards';
+import { ScrollView, View, Text, StyleSheet, Button, Alert, Modal } from 'react-native';
+import GradesheetDocument from '../components/GradesheetDocument';
 import GPACard from '../components/GPACard';
 import GradesheetTable from '../components/GradeSheetTable';
 import ProgramSelector from '../components/ProgramSelector';
@@ -48,7 +48,9 @@ const StudentDashboard = ({ grades, studentName, gpa, onSaveGrades, program: ini
           courseName: s.descriptiveTitle,
           coPrerequisite: s.coPrerequisite || '-',
           units: s.units ?? '-',
-          hours: s.hours ?? '-',
+          lec: s.lec ?? null,
+          lab: s.lab ?? null,
+          hours: s.hours ?? ((Number(s.lec || 0) + Number(s.lab || 0)) > 0 ? Number(s.lec || 0) + Number(s.lab || 0) : '-'),
           remarks: '-',
           grade: null,
           year: s.year ?? null,
@@ -70,6 +72,8 @@ const StudentDashboard = ({ grades, studentName, gpa, onSaveGrades, program: ini
     setEditableGrades((prev) => prev.map((g) => (g.courseCode === courseCode ? { ...g, grade: newGrade, remarks: newGrade } : g)));
   };
 
+  const [showDocument, setShowDocument] = React.useState(false);
+
   const handleSave = () => {
     const saved = editableGrades.filter((g) => g.grade != null && String(g.grade).trim() !== '').map((g) => ({ courseCode: g.courseCode, grade: g.grade, year: g.year, semester: g.semester }));
     // call optional prop or just log
@@ -78,26 +82,20 @@ const StudentDashboard = ({ grades, studentName, gpa, onSaveGrades, program: ini
     console.log('Saved grades:', saved);
   };
 
-  // filteredGrades computed below uses `program`, `year`, and `semester` state defined above
-  const filteredGrades = editableGrades.filter((g) => {
-    // program filter
-    if (program && program !== 'All') {
+  // Compute printableGrades: prefer the student's assigned program, fallback to currently selected `program`
+  const printableProgram = student?.program ?? program;
+  const printableGrades = editableGrades.filter((g) => {
+    // If printableProgram is specified and not 'All', only include subjects that belong to that program
+    if (printableProgram && printableProgram !== 'All') {
       const progs = (g._raw && g._raw.programs) || g.programs || [];
-      if (!Array.isArray(progs) || !progs.includes(program)) return false;
+      if (Array.isArray(progs)) return progs.includes(printableProgram);
+      return progs === printableProgram;
     }
-
-    // year filter
-    if (year && year !== 'All') {
-      if (Number(g.year) !== Number(year)) return false;
-    }
-
-    // semester filter
-    if (semester && semester !== 'All') {
-      if (Number(g.semester) !== Number(semester)) return false;
-    }
-
+    // otherwise include all
     return true;
   });
+
+
 
   return (
     <ScrollView style={styles.container}>
@@ -125,16 +123,27 @@ const StudentDashboard = ({ grades, studentName, gpa, onSaveGrades, program: ini
 
       <Text style={styles.subHeader}>Your Grades (enter your grades below)</Text>
 
-      {filteredGrades.map((grade) => (
-        <GradeCard key={grade.courseCode} grade={grade} />
-      ))}
-
       {/* Editable table view of subjects for the selected program */}
-      <GradesheetTable grades={editableGrades} editable={true} onChangeGrade={handleChangeGrade} program={program} />
+      <GradesheetTable grades={editableGrades} editable={true} onChangeGrade={handleChangeGrade} program={program} studentProgram={student?.program} />
 
-      <View style={{ marginTop: 12 }}>
-        <Button title="Save Grades" onPress={handleSave} />
+      <View style={{ marginTop: 12, flexDirection: 'row', gap: 8 }}>
+        <View style={{ flex: 1, marginRight: 6 }}>
+          <Button title="Printable Document" onPress={() => setShowDocument(true)} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Button title="Save Grades" onPress={handleSave} />
+        </View>
       </View>
+
+      <Modal visible={showDocument} animationType="slide" onRequestClose={() => setShowDocument(false)}>
+        <GradesheetDocument
+          grades={printableGrades}
+          student={{ name: studentName, program: student?.program ?? program }}
+          title={`Gradesheet — ${studentName}`}
+          onClose={() => setShowDocument(false)}
+        />
+      </Modal>
+
     </ScrollView>
   );
 };
